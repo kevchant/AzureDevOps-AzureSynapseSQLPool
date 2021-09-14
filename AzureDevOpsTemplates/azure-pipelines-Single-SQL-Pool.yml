@@ -36,6 +36,10 @@ trigger:
 pool: 
   name: $(agentpool)
 
+# To use a Microsoft-hosted pool comment out the above and uncomment the below:
+# pool: 
+#   vmimage: windows-latest
+
 stages:
 
 - stage: Pooldacpac
