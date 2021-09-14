@@ -1,0 +1,102 @@
+# Sample of how to deploy to an Azure Synapse Dedicated SQL Pool
+# You can use a self-hosted agent installed locally for this to work
+# You can also use a Microsoft-hosted agent for the Azure services
+
+# For this pipeline you also need to setup the below pipeline variables
+  # azuresubscription - The Azure subscription you use, 
+      # either it's full name or a service connection
+      # However, if using the full name for the variable it cannot be secret
+      # You will also need to give your pipeline permission when you first run it
+      # I recommend creating a service connection in PROJECT SETTINGS instead 
+      # of using full account details
+  # servername - Your dedicated SQL Pool endpoint
+  # database - The SQL Pool you want the update deployed to
+  # sqluser - User name to connect to the dedicated SQL Pool endpoint, try and keep this secret
+  # sqlpw - Password of above user, definitely keep this one secret
+# You can create these variables in the pipeline directly
+# Or alternatively in a variable group called Azure
+# Which you can do using the LIBRARY feature
+# Which I recommend if looking to deploy to multiple environments
+# To make it more secure you can add these variables as secrets in keyvault 
+# And link it to the variable group instead
+
+# I set these global variables as examples, feel free to change them
+variables:
+  poolstagingarea: $(Build.ArtifactStagingDirectory)\poolstaging
+  BuildConfiguration: release
+  SQLPoolartifactname: AzureSQLPool
+  SQLPooldacpacfile: $(System.ArtifactsDirectory)\$(SQLPoolartifactname)\SQLPool.dacpac
+
+# Take note that if this is added as a pipeline any updates of main branch triggers it
+trigger:
+- main
+
+# This is the name of the pool you have setup your local Azure DevOps Agent in
+pool: 
+  name: $(agentpool)
+
+stages:
+
+- stage: Pooldacpac
+  displayName: 'Build dacpac'
+
+  jobs:
+    - job: 'Builddacpac'
+      displayName: 'Build SQL Pool dacpac'
+      
+      steps:
+     
+      - task: VSBuild@1
+        displayName: 'Builds the dacpac'
+        inputs:
+          solution: SQLPool.sqlproj
+          configuration: $(BuildConfiguration)
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publishes dacpac as an artifact'
+        # Publishes the dacpac as part of an artifact within Azure DevOps
+        inputs:
+          PathtoPublish: 'bin\$(BuildConfiguration)'
+          ArtifactName: $(SQLPoolartifactname)
+          publishLocation: 'Container'
+
+# Now lets deploy to a dedicated SQL Pool
+- stage: AzureSQLPool
+  displayName: 'SQL Pool'
+  jobs:
+    - deployment: 'SQLPool'
+      displayName: 'Dedicated SQL Pool'
+      environment: Azure
+      variables:
+      - group: Azure
+
+      pool: 
+        name: $(agentpool)
+
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+                  - task: DownloadBuildArtifacts@0
+                    displayName: 'Dowload Artifacts'
+                    inputs:
+                      buildType: 'current'
+                      downloadType: 'specific'
+                      artifactName:  '$(SQLPoolartifactname)'
+                      downloadPath: '$(System.ArtifactsDirectory)'
+
+                  - task: SqlAzureDacpacDeployment@1
+                    displayName: 'Install DACPAC on dedicated SQL Pool'
+                    inputs:
+                      azureSubscription: 'azuresubscription'
+                      AuthenticationType: 'server'
+                      ServerName: $(SQLEndpoint)
+                      # Note new database in SQL Pool
+                      DatabaseName: '$(NewSQLPoolDB)'
+                      SqlUsername: '$(synapseuser)'
+                      SqlPassword: '$(synapsepw)'
+                      deployType: 'DacpacTask'
+                      DeploymentAction: 'Publish'
+                      DacpacFile: '$(SQLPooldacpacfile)'
+
+
