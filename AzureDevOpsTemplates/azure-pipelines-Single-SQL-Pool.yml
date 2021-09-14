@@ -3,6 +3,7 @@
 # You can also use a Microsoft-hosted agent for the Azure services
 
 # For this pipeline you also need to setup the below pipeline variables
+  # agentpool - The name of the pool your local Azure DevOps Agent has been setup in
   # azuresubscription - The Azure subscription you use, 
       # either it's full name or a service connection
       # However, if using the full name for the variable it cannot be secret
