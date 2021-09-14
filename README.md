@@ -2,7 +2,7 @@
 
 Example of a SQL Server Database Project that deploys to Azure Synapse Dedicated SQL Pool in Azure DevOps.
 
-It uses a YAML pipeline, which is in the root of this repository.
+It uses a YAML pipeline, which is in the AzureDevOpsTemplates folder.
 
 In order to use it in Azure Pipelines you can either import or fork this repository into another GitHub repository or into Azure Repos.
 
