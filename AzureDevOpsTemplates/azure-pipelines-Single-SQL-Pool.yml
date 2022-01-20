@@ -17,6 +17,7 @@
 # You can create these variables in the pipeline directly
 # Or alternatively in a variable group called Azure
 # Which you can do using the LIBRARY feature
+# I have commented out an example which you can use to set the environment in the AzureSQLPool stage
 # Which I recommend if looking to deploy to multiple environments
 # To make it more secure you can add these variables as secrets in keyvault 
 # And link it to the variable group instead
@@ -72,8 +73,8 @@ stages:
     - deployment: 'SQLPool'
       displayName: 'Dedicated SQL Pool'
       environment: Azure
-      variables:
-      - group: Azure
+#       variables:
+#       - group: Azure
 
       pool: 
         name: $(agentpool)
@@ -93,13 +94,13 @@ stages:
                   - task: SqlAzureDacpacDeployment@1
                     displayName: 'Install DACPAC on dedicated SQL Pool'
                     inputs:
-                      azureSubscription: 'azuresubscription'
+                      azureSubscription: $(azuresubscription)
                       AuthenticationType: 'server'
                       ServerName: $(SQLEndpoint)
                       # Note new database in SQL Pool
-                      DatabaseName: '$(NewSQLPoolDB)'
-                      SqlUsername: '$(synapseuser)'
-                      SqlPassword: '$(synapsepw)'
+                      DatabaseName: '$(database)'
+                      SqlUsername: '$(sqluser)'
+                      SqlPassword: '$(sqlpw)'
                       deployType: 'DacpacTask'
                       DeploymentAction: 'Publish'
                       DacpacFile: '$(SQLPooldacpacfile)'
