@@ -1,5 +1,0 @@
-CREATE USER [kcsynapsews] FOR EXTERNAL PROVIDER;
-
-
-GO
-
