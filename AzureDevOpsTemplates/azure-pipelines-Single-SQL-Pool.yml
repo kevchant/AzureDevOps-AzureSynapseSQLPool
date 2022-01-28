@@ -10,7 +10,7 @@
       # You will also need to give your pipeline permission when you first run it
       # I recommend creating a service connection in PROJECT SETTINGS instead 
       # of using full account details
-  # servername - Your dedicated SQL Pool endpoint
+  # SQLEndpoint - Your dedicated SQL Pool endpoint
   # database - The SQL Pool you want the update deployed to
   # sqluser - User name to connect to the dedicated SQL Pool endpoint, try and keep this secret
   # sqlpw - Password of above user, definitely keep this one secret
