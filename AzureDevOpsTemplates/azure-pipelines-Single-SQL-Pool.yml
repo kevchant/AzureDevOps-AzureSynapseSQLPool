@@ -13,7 +13,8 @@
   # SQLEndpoint - Your dedicated SQL Pool endpoint
   # database - The SQL Pool you want the update deployed to
   # sqluser - User name to connect to the dedicated SQL Pool endpoint, try and keep this secret
-  # sqlpw - Password of above user, definitely keep this one secret
+  # sqlpw - Password of above user, definitely keep this one secret.
+    # You sqlpw value MUST be wrapped in single quotes for it to work.
 # You can create these variables in the pipeline directly
 # Or alternatively in a variable group called Azure
 # Which you can do using the LIBRARY feature
