@@ -2,6 +2,8 @@
 
 Example of a SQL Server Database Project that deploys to Azure Synapse Dedicated SQL Pool in Azure DevOps. Based on a blog post I wrote called '[Create a dacpac for an Azure Synapse Analytics dedicated SQL Pool using Azure DevOps](https://bit.ly/3HQOfFp)'.
 
+In addition, you can watch me demo how this can be done in the [January 2023 edition of the Azure Synapse Analytics and Microsoft MVP series](https://www.youtube.com/watch?v=Dcpd4Z783Zs).
+
 A brief overview is below. However, there is also a [wiki for this project](https://github.com/kevchant/AzureDevOps-AzureSynapseSQLPool/wiki).
 
 It uses a YAML pipeline, which you can find in the AzureDevOpsTemplates folder.
